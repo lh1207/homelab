@@ -1,0 +1,26 @@
+volumes:
+  staging_site:
+
+services:
+  ftp:
+    image: stilliard/pure-ftpd:hardened
+    container_name: staging-ftp
+    network_mode: host
+    environment:
+      FTP_USER_NAME: ${FTP_USER_NAME:-staging}
+      FTP_USER_PASS: ${FTP_USER_PASS}
+      FTP_USER_HOME: /srv/site
+      PUBLICHOST: ${OPTIPLEX_IP:?set OPTIPLEX_IP in server/staging/.env}
+    volumes:
+      - staging_site:/srv/site
+    restart: unless-stopped
+
+  web:
+    image: nginx:alpine
+    container_name: staging-web
+    ports:
+      - "8090:80"
+    volumes:
+      - staging_site:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped

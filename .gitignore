@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor cruft
+*.swp
+*~
+
+# Secrets / local overrides — keep real secrets out of git
+.env
+*.env
+*.env.local
+!*.env.example

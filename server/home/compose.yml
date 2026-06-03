@@ -1,0 +1,17 @@
+volumes:
+  homebridge_data:
+
+services:
+  homebridge:
+    image: homebridge/homebridge:latest
+    container_name: homebridge
+    restart: unless-stopped
+    # network_mode: host is required for HomeKit mDNS/Bonjour discovery.
+    # Web UI will be on host port 8581 directly — Caddy cannot proxy mDNS,
+    # but the web UI itself can be proxied via homebridge.localhost → 8581.
+    network_mode: host
+    environment:
+      TZ: America/New_York
+      HOMEBRIDGE_CONFIG_UI_PORT: 8581
+    volumes:
+      - homebridge_data:/homebridge

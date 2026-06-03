@@ -1,0 +1,32 @@
+networks:
+  dns:
+    name: dns
+
+volumes:
+  pihole_data:
+  pihole_dnsmasq:
+
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    # NOTE: Port 53 requires disabling systemd-resolved stub on the Docker host.
+    # Run these on the host before starting this stack:
+    #   sed -i 's/#DNSStubListener=yes/DNSStubListener=no/' /etc/systemd/resolved.conf
+    #   systemctl restart systemd-resolved
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8888:80"       # Web UI — Caddy proxies pihole.localhost → 8888
+    environment:
+      TZ: America/New_York
+      WEBPASSWORD: ${WEBPASSWORD:?set WEBPASSWORD in reference/dns/.env}
+      FTLCONF_LOCAL_IPV4: ${PIHOLE_HOST_IP:?set PIHOLE_HOST_IP in reference/dns/.env}
+    volumes:
+      - pihole_data:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - dns

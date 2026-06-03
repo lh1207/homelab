@@ -1,0 +1,45 @@
+networks:
+  monitoring:
+    name: monitoring
+
+volumes:
+  grafana_data:
+  portainer_data:
+  uptimekuma_data:
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      TZ: America/New_York
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - monitoring
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3003:3001"
+    volumes:
+      - uptimekuma_data:/app/data
+    networks:
+      - monitoring

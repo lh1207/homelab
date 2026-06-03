@@ -1,0 +1,71 @@
+{
+  admin off
+  auto_https off
+}
+
+# ── AI ────────────────────────────────────────────────────────────────────────
+
+ai.localhost {
+  reverse_proxy localhost:3000
+}
+
+# ── Dev ───────────────────────────────────────────────────────────────────────
+
+pgadmin.localhost {
+  reverse_proxy localhost:5050
+}
+
+staging.localhost {
+  reverse_proxy localhost:8090
+}
+
+# ── Services ──────────────────────────────────────────────────────────────────
+
+vault.localhost {
+  encode gzip
+  reverse_proxy localhost:8080
+}
+
+git.localhost {
+  reverse_proxy localhost:3001
+}
+
+# NOTE: BookStack runs in its own Proxmox LXC, not this Docker LXC.
+# TODO: point this at the BookStack LXC IP.
+bookstack.localhost {
+  reverse_proxy localhost:6875
+}
+
+# ── Media ─────────────────────────────────────────────────────────────────────
+
+jellyfin.localhost {
+  reverse_proxy localhost:8096
+}
+
+# ── Home ──────────────────────────────────────────────────────────────────────
+
+homebridge.localhost {
+  reverse_proxy localhost:8581
+}
+
+# ── DNS ───────────────────────────────────────────────────────────────────────
+
+# NOTE: Pi-hole runs in its own Proxmox LXC, not this Docker LXC.
+# TODO: point this at the Pi-hole LXC IP.
+pihole.localhost {
+  reverse_proxy localhost:8888
+}
+
+# ── Monitoring ────────────────────────────────────────────────────────────────
+
+grafana.localhost {
+  reverse_proxy localhost:3002
+}
+
+portainer.localhost {
+  reverse_proxy localhost:9000
+}
+
+uptime.localhost {
+  reverse_proxy localhost:3003
+}

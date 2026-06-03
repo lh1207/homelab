@@ -1,0 +1,33 @@
+networks:
+  media:
+    name: media
+
+volumes:
+  jellyfin_config:
+  jellyfin_cache:
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    environment:
+      TZ: America/New_York
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      # SMB share at <smb-server-ip> — mount it on the Docker host first, then point here.
+      # On the Docker host, add to /etc/fstab:
+      #   //<smb-server-ip>/share /mnt/media cifs credentials=/etc/samba/creds,uid=1000,gid=1000,_netdev 0 0
+      # Create /etc/samba/creds:
+      #   username=YOUR_SMB_USER
+      #   password=YOUR_SMB_PASS
+      # Then: mount -a
+      - /mnt/media:/media:ro
+    networks:
+      - media
+    # --- Uncomment for Intel Quick Sync hardware transcoding ---
+    # devices:
+    #   - /dev/dri:/dev/dri
