@@ -18,10 +18,10 @@ jobs:
     name: gitleaks (secrets, full history)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0 # scan the entire history, not just the diff
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for PR scans
           GITLEAKS_CONFIG: .gitleaks.toml
@@ -30,7 +30,7 @@ jobs:
     name: no real .env tracked
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Fail if any non-example .env is tracked
         run: |
           tracked="$(git ls-files | grep -E '\.env(\..*)?$' | grep -v '\.env\.example$' || true)"
@@ -45,13 +45,13 @@ jobs:
     name: kics (compose misconfig)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       # KICS has dedicated Docker Compose queries (Trivy's config scanner does not
       # support compose). Report-only: ignore_on_exit=results so intentional homelab
       # choices (host networking, exposed DB ports) surface in the Security tab
       # without blocking pushes.
       - name: KICS Docker Compose scan
-        uses: checkmarx/kics-github-action@v2.1.20
+        uses: checkmarx/kics-github-action@05aa5eb70eede1355220f4ca5238d96b397e30a6 # v2.1.20
         with:
           path: "."
           type: DockerCompose
@@ -59,7 +59,7 @@ jobs:
           output_path: kics-results/
           ignore_on_exit: results
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@d77b13a0df3134d64a457ea9003f600b09fa1c8a # v3
         if: always()
         with:
           sarif_file: kics-results/results.sarif
@@ -94,7 +94,7 @@ jobs:
           - vaultwarden/server:latest
     steps:
       - name: Trivy scan ${{ matrix.image }}
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ matrix.image }}
           severity: HIGH,CRITICAL
