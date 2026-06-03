@@ -1,0 +1,21 @@
+# gitleaks config for lh1207/homelab
+# Extends the built-in rule set; only adds an allowlist so the committed
+# .env.example templates and their placeholder values don't trip false positives.
+title = "homelab gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow example/template files and angle-bracket placeholders only"
+# Never flag the committed example templates — they intentionally contain
+# variable names and placeholder values, never real secrets.
+paths = [
+  '''.*\.env\.example$''',
+]
+# Only suppress angle-bracket placeholder tokens (e.g. <mac-ip>, <docker-lxc-ip>).
+# Deliberately NOT allowlisting words like "example"/"changeme" — that would mask
+# real secrets that happen to contain those substrings.
+regexes = [
+  '''<[a-z0-9-]+>''',
+]
