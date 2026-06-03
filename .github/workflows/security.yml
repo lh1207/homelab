@@ -23,6 +23,7 @@ jobs:
           fetch-depth: 0 # scan the entire history, not just the diff
       - uses: gitleaks/gitleaks-action@v2
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required for PR scans
           GITLEAKS_CONFIG: .gitleaks.toml
 
   env-guard:
