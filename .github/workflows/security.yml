@@ -1,0 +1,103 @@
+name: security
+
+# Layers 3 of the secret/vuln defense (see README "Security"). Secret + config
+# scans run on every push/PR; the heavier image CVE scan runs weekly and on demand.
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC — weekly image CVE scan
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write # upload SARIF to the Security tab
+
+jobs:
+  secret-scan:
+    name: gitleaks (secrets, full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # scan the entire history, not just the diff
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  env-guard:
+    name: no real .env tracked
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if any non-example .env is tracked
+        run: |
+          tracked="$(git ls-files | grep -E '\.env(\..*)?$' | grep -v '\.env\.example$' || true)"
+          if [ -n "$tracked" ]; then
+            echo "::error::Real .env file(s) are tracked in git:"
+            echo "$tracked"
+            exit 1
+          fi
+          echo "OK: no real .env files tracked."
+
+  config-scan:
+    name: kics (compose misconfig)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # KICS has dedicated Docker Compose queries (Trivy's config scanner does not
+      # support compose). Report-only: ignore_on_exit=results so intentional homelab
+      # choices (host networking, exposed DB ports) surface in the Security tab
+      # without blocking pushes.
+      - name: KICS Docker Compose scan
+        uses: checkmarx/kics-github-action@v2.1.20
+        with:
+          path: "."
+          type: DockerCompose
+          output_formats: sarif
+          output_path: kics-results/
+          ignore_on_exit: results
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: kics-results/results.sarif
+          category: kics-docker-compose
+
+  image-scan:
+    name: trivy image CVE scan
+    # Heavy (pulls 18 images): only weekly cron or manual run, not every push.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - caddy:2-alpine
+          - dpage/pgadmin4:latest
+          - ghcr.io/open-webui/open-webui:main
+          - gitea/gitea:latest
+          - grafana/grafana:latest
+          - homebridge/homebridge:latest
+          - jellyfin/jellyfin:latest
+          - louislam/uptime-kuma:latest
+          - lscr.io/linuxserver/bookstack:latest
+          - lscr.io/linuxserver/mariadb:latest
+          - nginx:alpine
+          - ollama/ollama:latest
+          - pihole/pihole:latest
+          - portainer/portainer-ce:latest
+          - postgres:16
+          - redis:7-alpine
+          - stilliard/pure-ftpd:hardened
+          - vaultwarden/server:latest
+    steps:
+      - name: Trivy scan ${{ matrix.image }}
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ matrix.image }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true # only actionable (fixable) CVEs
+          vuln-type: os,library
+          exit-code: "1"
+          format: table

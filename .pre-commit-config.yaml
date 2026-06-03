@@ -1,0 +1,31 @@
+# Layer 1: local guardrails that run before a commit is created.
+# One-time setup:  brew install pre-commit gitleaks  &&  pre-commit install
+# Run manually:    pre-commit run --all-files
+repos:
+  # Secret scanning on the staged diff — rejects the commit on any match.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
+  # General hygiene.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: check-yaml
+
+  # Belt-and-suspenders over .gitignore: hard-fail if a real .env is staged
+  # (e.g. someone did `git add -f`). Only *.env.example is allowed.
+  - repo: local
+    hooks:
+      - id: forbid-real-env
+        name: block real .env files (use .env.example)
+        language: fail
+        entry: "Real .env files must never be committed — keep them git-ignored and commit .env.example instead."
+        files: '\.env(\..*)?$'
+        exclude: '\.env\.example$'

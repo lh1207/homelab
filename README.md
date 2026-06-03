@@ -125,3 +125,30 @@ docker compose up -d
 `.env` is git-ignored, so it does **not** travel with `git push`/`pull` — create it on
 each host that runs the stack. Stacks with secrets: `server/databases`, `server/staging`,
 `workstation/dev`, `reference/wiki`, `reference/dns`.
+
+## Security / secret hygiene
+
+This repo is public, so it runs three independent layers to keep secrets and known
+vulnerabilities out of the tree:
+
+1. **Local pre-commit hook** ([`.pre-commit-config.yaml`](.pre-commit-config.yaml)) —
+   [gitleaks](https://github.com/gitleaks/gitleaks) scans the staged diff and a local
+   hook hard-fails if a real `.env` is staged. Rejects the commit before it exists.
+2. **GitHub Push Protection + Secret Scanning** (repo settings, free for public repos) —
+   GitHub's server rejects any `git push` containing a recognized secret pattern.
+3. **CI workflow** ([`.github/workflows/security.yml`](.github/workflows/security.yml)) —
+   on every push/PR: gitleaks over the full history, an `env-guard` check that no real
+   `.env` is tracked, and a [KICS](https://kics.io/) misconfiguration scan of the compose
+   files (report-only). Weekly (and on demand) it also runs a [Trivy](https://trivy.dev/)
+   CVE scan of every container image. Findings surface in the repo **Security** tab.
+
+### One-time local setup
+
+```sh
+brew install pre-commit gitleaks trivy
+pre-commit install          # activate the commit-time hook
+pre-commit run --all-files  # optional: scan the whole repo now
+```
+
+gitleaks false positives on the committed templates are suppressed in
+[`.gitleaks.toml`](.gitleaks.toml).
