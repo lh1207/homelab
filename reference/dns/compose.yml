@@ -16,13 +16,14 @@ services:
     #   sed -i 's/#DNSStubListener=yes/DNSStubListener=no/' /etc/systemd/resolved.conf
     #   systemctl restart systemd-resolved
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "8888:80"       # Web UI — Caddy proxies pihole.localhost → 8888
+      - "0.0.0.0:53:53/tcp"
+      - "0.0.0.0:53:53/udp"
+      - "0.0.0.0:8888:80"  # Web UI — Caddy proxies pihole.localhost → 8888
     environment:
       TZ: America/New_York
-      WEBPASSWORD: ${WEBPASSWORD:?set WEBPASSWORD in reference/dns/.env}
+      FTLCONF_webserver_api_password: ${PIHOLE_WEBPASSWORD:-${WEBPASSWORD:?set PIHOLE_WEBPASSWORD in reference/dns/.env}}
       FTLCONF_LOCAL_IPV4: ${PIHOLE_HOST_IP:?set PIHOLE_HOST_IP in reference/dns/.env}
+      FTLCONF_dns_listeningMode: all
     volumes:
       - pihole_data:/etc/pihole
       - pihole_dnsmasq:/etc/dnsmasq.d

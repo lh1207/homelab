@@ -12,7 +12,7 @@ services:
     container_name: jellyfin
     restart: unless-stopped
     ports:
-      - "8096:8096"
+      - "0.0.0.0:8096:8096"
     environment:
       TZ: America/New_York
     volumes:

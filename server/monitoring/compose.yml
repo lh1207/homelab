@@ -13,7 +13,7 @@ services:
     container_name: grafana
     restart: unless-stopped
     ports:
-      - "3002:3000"
+      - "0.0.0.0:3002:3000"
     environment:
       TZ: America/New_York
     volumes:
@@ -26,7 +26,7 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "0.0.0.0:9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
@@ -38,7 +38,7 @@ services:
     container_name: uptime-kuma
     restart: unless-stopped
     ports:
-      - "3003:3001"
+      - "0.0.0.0:3003:3001"
     volumes:
       - uptimekuma_data:/app/data
     networks:
