@@ -24,6 +24,9 @@ stack is a self-contained `compose.yml` you can bring up independently with
   serves friendly `*.localhost` hostnames and proxies them to the right service.
 - **AI:** Open WebUI (Docker LXC) talks to **Ollama running baremetal on the Mac**
   at `<mac-ip>:11434` (Ollama is LAN-exposed for this reason).
+  If Ollama and Open WebUI are ever moved onto the same Linux Docker host, use
+  `http://host.docker.internal:11434`; the Open WebUI compose file maps that name
+  to Docker's host gateway.
 - **Database:** pgAdmin (Mac) connects to **Postgres in the Docker LXC** at
   `<docker-lxc-ip>:5432`.
 
@@ -104,7 +107,9 @@ Each folder is independent, so you only bring up what you need.
 - **Jellyfin media** (`server/media`) expects an SMB share mounted at `/mnt/media`
   on the Docker host. Mount instructions are in the compose file comments.
 - **Pi-hole on port 53** requires disabling the host's `systemd-resolved` DNS stub
-  first — see comments in `reference/dns/compose.yml` if you ever containerize it.
+  first. The reference compose publishes DNS and web UI on `0.0.0.0` and sets
+  Pi-hole's Docker DNS listening mode to `all`; see comments in
+  `reference/dns/compose.yml` if you ever containerize it.
 - **Homebridge** uses host networking for HomeKit/Bonjour discovery; only its web UI
   is proxied.
 
