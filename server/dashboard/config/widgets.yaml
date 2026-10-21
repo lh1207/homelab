@@ -1,0 +1,9 @@
+- greeting:
+    text_size: xl
+    text: Levi's Homelab
+- datetime:
+    text_size: md
+    format:
+      dateStyle: full
+      timeStyle: short
+      hour12: true

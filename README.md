@@ -54,6 +54,16 @@ stack is a self-contained `compose.yml` you can bring up independently with
 
 ## Services
 
+The service dashboard is [Homepage](https://homepage.localhost), deployed on the
+Docker LXC from `/root/services/optiplex/dashboard`. Its 20 cards cover the Docker
+services, Home Assistant, Proxmox, the Mac Reddit knowledge base, and the undeployed
+staging definition. Twelve web services have HTTP reachability indicators; native
+services link to their management tools. See [dashboard configuration and user
+testimony](server/dashboard/README.md). Home Assistant uses the user-supplied
+`http://homeassistant.local:8123` URL. The `.localhost` names resolve on the client
+itself. Trust the existing Caddy local CA on the Mac; see the dashboard operating
+instructions for access details.
+
 ### `workstation/` — Mac, `<mac-ip>`
 
 | Stack        | Service | Port   | URL                  | Notes                              |

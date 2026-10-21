@@ -1,9 +1,13 @@
 {
   admin off
-  auto_https off
+  local_certs
 }
 
 # ── AI ────────────────────────────────────────────────────────────────────────
+
+homepage.localhost {
+  reverse_proxy 127.0.0.1:3004
+}
 
 ai.localhost {
   reverse_proxy localhost:3000

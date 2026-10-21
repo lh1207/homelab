@@ -1,0 +1,22 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v2.6.0
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3004:3000"
+      - "${DASHBOARD_BIND_IP:?set DASHBOARD_BIND_IP in server/dashboard/.env}:3004:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      TZ: America/New_York
+      LOG_TARGETS: stdout
+      HOMEPAGE_ALLOWED_HOSTS: homepage.localhost
+      HOMEPAGE_VAR_PROXMOX_URL: ${HOMEPAGE_VAR_PROXMOX_URL:?set the Proxmox URL}
+      HOMEPAGE_VAR_HOMEASSISTANT_URL: ${HOMEPAGE_VAR_HOMEASSISTANT_URL:?set the Home Assistant URL}
+    volumes:
+      - type: bind
+        source: ./config
+        target: /app/config
+        bind:
+          create_host_path: false

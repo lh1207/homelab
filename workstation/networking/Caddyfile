@@ -1,6 +1,6 @@
 {
   admin off
-  auto_https off
+  local_certs
 }
 
 # ── Local (Mac) ───────────────────────────────────────────────────────────────
@@ -16,6 +16,10 @@ pgadmin.localhost {
 # ── Docker LXC ({$DOCKER_LXC_IP}, set in .env) ───────────────────────────────
 
 # AI
+homepage.localhost {
+  reverse_proxy {$DOCKER_LXC_IP}:3004
+}
+
 ai.localhost {
   reverse_proxy {$DOCKER_LXC_IP}:3000
 }
