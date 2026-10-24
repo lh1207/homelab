@@ -8,7 +8,7 @@ services:
     network_mode: host
     environment:
       FTP_USER_NAME: ${FTP_USER_NAME:-staging}
-      FTP_USER_PASS: ${FTP_USER_PASS}
+      FTP_USER_PASS: ${FTP_USER_PASS:?set FTP_USER_PASS in server/staging/.env}
       FTP_USER_HOME: /srv/site
       PUBLICHOST: ${OPTIPLEX_IP:?set OPTIPLEX_IP in server/staging/.env}
     volumes:

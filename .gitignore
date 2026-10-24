@@ -11,6 +11,11 @@ Thumbs.db
 
 # Secrets / local overrides — keep real secrets out of git
 .env
+.env.*
 *.env
+*.env.*
 *.env.local
 !*.env.example
+
+# Local operational handoff; contains private deployment addresses.
+/SESSION_HANDOFF.local.md

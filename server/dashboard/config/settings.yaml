@@ -1,0 +1,28 @@
+title: Levi's Homelab
+description: Services, infrastructure, and home automation
+theme: dark
+color: slate
+headerStyle: clean
+statusStyle: dot
+useEqualHeights: true
+target: _blank
+disableIndexing: true
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+layout:
+  Everyday:
+    style: row
+    columns: 4
+  Home & Network:
+    style: row
+    columns: 3
+  Operations:
+    style: row
+    columns: 4
+  Data & Infrastructure:
+    style: row
+    columns: 4
+  Development:
+    style: row
+    columns: 4
