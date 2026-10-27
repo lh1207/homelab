@@ -8,9 +8,18 @@ services:
     container_name: caddy
     restart: unless-stopped
     network_mode: host
-    env_file:
-      - .env          # provides DOCKER_LXC_IP for {$DOCKER_LXC_IP} in the Caddyfile
+    environment:
+      PGADMIN_UPSTREAM: ${PGADMIN_UPSTREAM:?set PGADMIN_UPSTREAM in workstation/networking/.env}
+      OLLAMA_UPSTREAM: ${OLLAMA_UPSTREAM:?set OLLAMA_UPSTREAM in workstation/networking/.env}
+      DOCKER_LXC_IP: ${DOCKER_LXC_IP:?set DOCKER_LXC_IP in workstation/networking/.env}
+      BOOKSTACK_UPSTREAM: ${BOOKSTACK_UPSTREAM:?set BOOKSTACK_UPSTREAM in workstation/networking/.env}
+      PIHOLE_UPSTREAM: ${PIHOLE_UPSTREAM:?set PIHOLE_UPSTREAM in workstation/networking/.env}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - type: bind
+        source: ./Caddyfile
+        target: /etc/caddy/Caddyfile
+        read_only: true
+        bind:
+          create_host_path: false
       - caddy_data:/data
       - caddy_config:/config

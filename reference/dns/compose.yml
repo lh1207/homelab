@@ -4,7 +4,9 @@ networks:
 
 volumes:
   pihole_data:
+    name: ${PIHOLE_DATA_VOLUME:-dns_pihole_migrated_20261018}
   pihole_dnsmasq:
+    name: ${PIHOLE_DNSMASQ_VOLUME:-dns_pihole_dnsmasq_migrated_20261018}
 
 services:
   pihole:
@@ -24,7 +26,8 @@ services:
       # KICS false positive: the password is supplied at runtime, never hardcoded.
       # kics-scan ignore-line
       FTLCONF_webserver_api_password: ${PIHOLE_WEBPASSWORD:-${WEBPASSWORD:?set PIHOLE_WEBPASSWORD in reference/dns/.env}}
-      FTLCONF_LOCAL_IPV4: ${PIHOLE_HOST_IP:?set PIHOLE_HOST_IP in reference/dns/.env}
+      FTLCONF_dns_reply_host_force4: "true"
+      FTLCONF_dns_reply_host_IPv4: ${PIHOLE_HOST_IP:?set PIHOLE_HOST_IP in reference/dns/.env}
       FTLCONF_dns_listeningMode: all
     volumes:
       - pihole_data:/etc/pihole

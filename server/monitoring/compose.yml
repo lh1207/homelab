@@ -6,6 +6,7 @@ volumes:
   grafana_data:
   portainer_data:
   uptimekuma_data:
+    name: ${UPTIMEKUMA_DATA_VOLUME:-monitoring_uptimekuma_migrated_20261018}
 
 services:
   grafana:
@@ -34,7 +35,7 @@ services:
       - monitoring
 
   uptime-kuma:
-    image: louislam/uptime-kuma:latest
+    image: louislam/uptime-kuma:2.2.1
     container_name: uptime-kuma
     restart: unless-stopped
     ports:

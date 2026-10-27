@@ -4,7 +4,9 @@ networks:
 
 volumes:
   bookstack_data:
+    name: ${BOOKSTACK_DATA_VOLUME:-wiki_bookstack_migrated_20261018}
   bookstack_db_data:
+    name: ${BOOKSTACK_DB_VOLUME:-wiki_bookstack_db_migrated_20261018}
 
 services:
   bookstack:
@@ -18,11 +20,11 @@ services:
       PGID: 1000
       TZ: America/New_York
       APP_KEY: ${APP_KEY:?set APP_KEY in reference/wiki/.env}
-      APP_URL: http://bookstack.localhost
+      APP_URL: https://bookstack.localhost
       DB_HOST: bookstack-db
       DB_PORT: 3306
-      DB_USER: bookstack
-      DB_PASS: ${BOOKSTACK_DB_PASS:?set BOOKSTACK_DB_PASS in reference/wiki/.env}
+      DB_USERNAME: bookstack
+      DB_PASSWORD: ${BOOKSTACK_DB_PASS:?set BOOKSTACK_DB_PASS in reference/wiki/.env}
       DB_DATABASE: bookstack
     volumes:
       - bookstack_data:/config
@@ -42,7 +44,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in reference/wiki/.env}
       MYSQL_DATABASE: bookstack
       MYSQL_USER: bookstack
-      MYSQL_PASSWORD: ${BOOKSTACK_DB_PASS:?set BOOKSTACK_DB_PASS in reference/wiki/.env}   # must match bookstack DB_PASS
+      MYSQL_PASSWORD: ${BOOKSTACK_DB_PASS:?set BOOKSTACK_DB_PASS in reference/wiki/.env}   # must match bookstack DB_PASSWORD
     volumes:
       - bookstack_db_data:/config
     networks:

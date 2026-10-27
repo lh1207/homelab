@@ -14,6 +14,34 @@ permissions:
   security-events: write # upload SARIF to the Security tab
 
 jobs:
+  dashboard-smoke:
+    name: Homepage hardened startup
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DASHBOARD_BIND_IP: 127.0.0.2
+      HOMEPAGE_VAR_PROXMOX_URL: https://proxmox.invalid:8006
+      HOMEPAGE_VAR_HOMEASSISTANT_URL: http://homeassistant.invalid:8123
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Start an isolated dashboard and check HTTP access
+        shell: bash
+        run: |
+          test_dir="$(mktemp -d)"
+          cp server/dashboard/compose.yml "$test_dir/compose.yml"
+          cp -R server/dashboard/config "$test_dir/config"
+          compose=(docker compose --project-name dashboard-smoke --env-file /dev/null -f "$test_dir/compose.yml")
+          cleanup() {
+            "${compose[@]}" logs --no-color
+            "${compose[@]}" down
+            rm -rf "$test_dir"
+          }
+          trap cleanup EXIT
+          "${compose[@]}" up --detach --wait --wait-timeout 120
+          "${compose[@]}" exec -T homepage sh -c 'grep -Eq "^CapEff:[[:space:]]+0+$" /proc/1/status && grep -Eq "^NoNewPrivs:[[:space:]]+1$" /proc/1/status'
+          "${compose[@]}" exec -T homepage wget -q -O /dev/null --header='Host: homepage.localhost' http://127.0.0.1:3000
+
   secret-scan:
     name: gitleaks (secrets, full history)
     runs-on: ubuntu-latest

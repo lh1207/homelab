@@ -1,5 +1,6 @@
 volumes:
   homebridge_data:
+    name: ${HOMEBRIDGE_DATA_VOLUME:-home_homebridge_migrated_20261018}
 
 services:
   homebridge:
