@@ -305,6 +305,15 @@ negotiation tests found that the router accepts SMB 2.0 and rejects SMB 2.1 and
 SMB 3; a separate read-only SMB 2.0 mount now works with the saved credentials.
 The automatic mount after a host reboot remains untested.
 
+## Service runbooks
+
+See the [runbook index](docs/runbooks/README.md) for
+[Pi-hole](docs/runbooks/pihole.md), [Tailscale](docs/runbooks/tailscale.md),
+[BookStack](docs/runbooks/bookstack.md), and
+[Uptime Kuma](docs/runbooks/uptime-kuma.md). These separate dated migration
+evidence from proposed diagnosis and recovery procedures. Tailscale placement
+and deployment are not established by this repository.
+
 ## Deploying a stack
 
 ```sh
