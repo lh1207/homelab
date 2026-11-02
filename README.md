@@ -324,6 +324,47 @@ docker compose logs -f
 
 Each folder is independent, so you only bring up what you need.
 
+### Updating container images
+
+All Compose images use `repository:tag@sha256:...`. The tag records the selected
+release or channel; the digest controls the exact content Docker pulls. Where
+available, pins use the multi-platform index digest so Docker can select the
+host's architecture. Updates are manual and reviewed in a PR; pulling a pinned
+image alone does not update it when its tag moves.
+
+To update an image:
+
+1. Review the upstream release notes and any data migration requirements. Keep
+   version tags such as Jellyfin's and Uptime Kuma's unless an upgrade is intended.
+2. Resolve the chosen tag from its registry, for example:
+
+   ```sh
+   docker buildx imagetools inspect caddy:2-alpine
+   ```
+
+   Copy the top-level `Digest:` value, rather than a single platform's child
+   digest. Replace the digest in every Compose file using that image; both Caddy
+   definitions must match.
+3. Update the corresponding `image-scan.strategy.matrix.include` entry in
+   [security.yml](.github/workflows/security.yml) to the same full reference. Keep
+   its `name` as the tag without a digest so scan history stays in one SARIF
+   category. Add an entry when introducing a new image; include reference stacks.
+4. Validate the affected Compose definitions with dummy/example environment
+   values (`docker compose --env-file <dummy-env> config --quiet`), run the local
+   hooks, and review the PR checks. Run the **security** workflow manually against
+   the PR branch to scan the new digests, then review its Security tab findings
+   and any skipped uploads caused by registry failures.
+5. Deployment is a separate step on the owning host. Back up persistent data and
+   retain the previous Compose reference before an authorized rollout. The live
+   Compose sources are outside this checkout (see topology above); synchronize
+   the reviewed reference there before pulling and recreating the affected
+   service. Verify that service's health and application flow afterward.
+
+Reverting the digest selects the previous image, but does not reverse database
+or data-format migrations; follow the service's recovery procedure when needed.
+Pinning also preserves existing upstream vulnerabilities: the staging FTP image
+still needs replacement as tracked in [issue #2](https://github.com/lh1207/homelab/issues/2).
+
 ### Prerequisites & gotchas
 
 - **Staging host** (`server/staging`) reads `FTP_USER_PASS` / `OPTIPLEX_IP` from a `.env`

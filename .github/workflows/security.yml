@@ -95,32 +95,53 @@ jobs:
 
   image-scan:
     name: trivy image CVE scan
-    # Heavy (pulls 18 images): only weekly cron or manual run, not every push.
+    # Scan the same immutable references used by Compose, including reference stacks.
+    # Heavy (pulls 19 images): only weekly cron or manual run, not every push.
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 6 # fewer concurrent Docker Hub pulls — avoids the i/o timeouts seen at 18-wide
       matrix:
-        image:
-          - caddy:2-alpine
-          - dpage/pgadmin4:latest
-          - ghcr.io/open-webui/open-webui:main
-          - gitea/gitea:latest
-          - grafana/grafana:latest
-          - homebridge/homebridge:latest
-          - jellyfin/jellyfin:latest
-          - louislam/uptime-kuma:latest
-          - lscr.io/linuxserver/bookstack:latest
-          - lscr.io/linuxserver/mariadb:latest
-          - nginx:alpine
-          - ollama/ollama:latest
-          - pihole/pihole:latest
-          - portainer/portainer-ce:latest
-          - postgres:16
-          - redis:7-alpine
-          - stilliard/pure-ftpd:hardened
-          - vaultwarden/server:latest
+        include:
+          - name: caddy:2-alpine
+            image: caddy:2-alpine@sha256:e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5
+          - name: dpage/pgadmin4:latest
+            image: dpage/pgadmin4:latest@sha256:3591b3d02910dcd817dec6fcaa681c278ba6966945283dd0ea0042731c330c83
+          - name: ghcr.io/gethomepage/homepage:v2.6.0
+            image: ghcr.io/gethomepage/homepage:v2.6.0@sha256:3e38fe788223cb46a3ce1f046ef11667b40f7707fdca0dcbfa3f86c5c42bf1e8
+          - name: ghcr.io/open-webui/open-webui:main
+            image: ghcr.io/open-webui/open-webui:main@sha256:0b399a8ba34558e181d316750455f2a95376a38cd60a61b9c942e138898944bd
+          - name: gitea/gitea:latest
+            image: gitea/gitea:latest@sha256:8967bf9deaf3c5c4adae13519436dc1b20c646ac83fe37ae810c933a1045227d
+          - name: grafana/grafana:latest
+            image: grafana/grafana:latest@sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205
+          - name: homebridge/homebridge:latest
+            image: homebridge/homebridge:latest@sha256:169416416bf303bb64bfd6c666f64d93a4f52f54db9a64e8ad553b5dc89fcea4
+          - name: jellyfin/jellyfin:10.11.8
+            image: jellyfin/jellyfin:10.11.8@sha256:1694ff069f0c9dafb283c36765175606866769f5d72f2ed56b6a0f1be922fc37
+          - name: louislam/uptime-kuma:2.2.1
+            image: louislam/uptime-kuma:2.2.1@sha256:7337368a77873f159435de9ef09567f68c31285ed5f951dec36256c4b267ee44
+          - name: lscr.io/linuxserver/bookstack:latest
+            image: lscr.io/linuxserver/bookstack:latest@sha256:da6324232770050b7d5f6222e8f4e223f1c688363b02ebb3c15a7546dd7133d5
+          - name: lscr.io/linuxserver/mariadb:latest
+            image: lscr.io/linuxserver/mariadb:latest@sha256:d0f9ffd4d00878b8892888e70cb8ea12f4d2dfa63ac940ceb9fd1b36a1b449e3
+          - name: nginx:alpine
+            image: nginx:alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606
+          - name: ollama/ollama:latest
+            image: ollama/ollama:latest@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
+          - name: pihole/pihole:latest
+            image: pihole/pihole:latest@sha256:30f803ad5dd60ff96cc0a63008a2e9271af481c1b0399a182192b2e91152c1f9
+          - name: portainer/portainer-ce:latest
+            image: portainer/portainer-ce:latest@sha256:3609c307943bca8e5c492f69ddd6965df177208b50678a4cff28391c8dd4e96e
+          - name: postgres:16
+            image: postgres:16@sha256:5db6dac2ef5dcff512f4f00a009c3c332b9f2f28f24277175bf3e4a3d02ef83a
+          - name: redis:7-alpine
+            image: redis:7-alpine@sha256:8da19c7399dca900c6822a1cf30f9d2285585e2c4b457ff4095b0f4500054d3f
+          - name: stilliard/pure-ftpd:hardened
+            image: stilliard/pure-ftpd:hardened@sha256:1d15f8091b18d399178acc47559b9328c3deecca732d52df96e65303d6a8a966
+          - name: vaultwarden/server:latest
+            image: vaultwarden/server:latest@sha256:4fe17f415f90087377d37c755e0ea3cf189dcc6794e49cdd2a9adbb4937d9e1f
     steps:
       - name: Trivy scan ${{ matrix.image }}
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -138,4 +159,4 @@ jobs:
         if: hashFiles('trivy-results.sarif') != '' # only when the scan actually produced results
         with:
           sarif_file: trivy-results.sarif
-          category: trivy-image-${{ matrix.image }} # unique per image so uploads don't clobber
+          category: trivy-image-${{ matrix.name }} # stable across digest updates; unique per image
