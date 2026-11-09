@@ -42,6 +42,61 @@ For redirects or mixed content, verify deployed `APP_URL` matches the route and
 the proxy/client CA trust. Do not generate a new `APP_KEY` to fix authentication
 or decryption errors; the original encryption key is part of the recovery set.
 
+## Change the base URL
+
+Use this one-time procedure when deploying the migrated library from
+`https://bookstack.localhost` to `https://docker.bookstack`. Existing absolute
+image URLs and content links need a database update as well as `APP_URL`.
+The [LinuxServer image instructions](https://docs.linuxserver.io/images/docker-bookstack/#changing-app_url)
+provide the `bookstack:update-url` command below. This is an operator procedure,
+not a record of a completed live cutover.
+
+1. On CT 105, confirm the live `wiki` project and directory using the container
+   labels described in [common precautions](common.md#establish-the-target).
+   The recorded source is `/root/services/optiplex/wiki/compose.yml`, outside this
+   checkout. Confirm both selected migrated volumes listed above, current image
+   IDs, and the actual old URL before proceeding. If a prior cutover already
+   migrated the content, verify it instead of repeating the mutation.
+2. Arrange downtime and block client access to BookStack through both the proxy
+   and direct port 6875, keeping it blocked through verification. Stop BookStack,
+   then MariaDB. Follow the [consistent cold backup procedure](common.md#before-a-restart-upgrade-or-restore)
+   for both `/config` volumes, the original `APP_KEY`, credentials, and live
+   deployment configuration. Verify archive checksums and record the backup
+   location privately before changing anything; the October backup does not
+   cover subsequent edits.
+3. Set `APP_URL: https://docker.bookstack` in the live Compose source, preserving
+   the image references, encryption key, credentials, and volume selections.
+   Start `bookstack-db` and wait for database readiness, then apply the changed
+   application environment without pulling an image:
+
+   ```sh
+   docker compose up -d --no-deps --pull never --force-recreate bookstack
+   ```
+
+   Confirm the recreated application's mounts and readiness before continuing.
+   A first-run screen means stop and investigate the selected data.
+4. With the application and database running and client access still blocked,
+   run from the confirmed live stack directory:
+
+   ```sh
+   docker compose exec bookstack php /app/www/artisan bookstack:update-url 'https://bookstack.localhost' 'https://docker.bookstack'
+   ```
+
+   Require successful completion; preserve the result privately. If the actual
+   old URL differs, use that exact value. Do not substitute a different hostname
+   merely to make the command succeed.
+5. From a LAN client using Pi-hole DNS and the trusted Caddy CA, sign in at
+   `https://docker.bookstack`. Open existing pages, embedded uploaded images,
+   attachments, and internal content links; inspect their destinations for the
+   old hostname. Check permissions and expected library contents. Verify again
+   after restarting BookStack, then reopen client access and record the cutover.
+
+If the command or acceptance checks fail, keep access blocked, preserve the failed
+state, and restore the saved live configuration and consistent pre-change volume
+pair using the recovery procedure below. Changing `APP_URL` back alone does not
+undo database content changes. Avoid a blanket reverse URL replacement, which
+could also change content that already used the new hostname before this cutover.
+
 ## Restart or recover
 
 For an application-only transient failure with a healthy DB:
