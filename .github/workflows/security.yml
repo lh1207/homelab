@@ -40,7 +40,9 @@ jobs:
           trap cleanup EXIT
           "${compose[@]}" up --detach --wait --wait-timeout 120
           "${compose[@]}" exec -T homepage sh -c 'grep -Eq "^CapEff:[[:space:]]+0+$" /proc/1/status && grep -Eq "^NoNewPrivs:[[:space:]]+1$" /proc/1/status'
-          "${compose[@]}" exec -T homepage wget -q -O /dev/null --header='Host: homepage.localhost' http://127.0.0.1:3000
+          for dashboard_host in homepage.localhost docker.homepage; do
+            "${compose[@]}" exec -T homepage wget -q -O /dev/null --header="Host: $dashboard_host" http://127.0.0.1:3000
+          done
 
   secret-scan:
     name: gitleaks (secrets, full history)

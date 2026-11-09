@@ -35,7 +35,8 @@ source LXCs and existing Docker volumes for rollback.
 ### How the pieces talk to each other
 
 - **Reverse proxy:** A [Caddy](https://caddyserver.com/) instance on each Docker host
-  serves friendly `https://*.localhost` hostnames and proxies them to the right service.
+  serves HTTPS and proxies requests to the right service. The server proxy accepts
+  `docker.<service>` names; both proxies retain the legacy `*.localhost` routes.
   Caddy issues and renews baseline certificates with its local certificate authority.
 - **AI:** Open WebUI and Ollama both run on the Docker LXC and share the `ai`
   Docker network. Open WebUI now uses the verified `http://ollama:11434`
@@ -71,7 +72,7 @@ source LXCs and existing Docker volumes for rollback.
 
 ## Services
 
-The service dashboard is [Homepage](https://homepage.localhost), deployed on the
+The service dashboard is [Homepage](https://docker.homepage), deployed on the
 Docker LXC from `/root/services/optiplex/dashboard`. Its 20 cards cover the Docker
 services, Home Assistant, Proxmox, the Mac Reddit knowledge base, and the undeployed
 staging definition. Twelve web services have HTTP reachability indicators; native
@@ -84,25 +85,25 @@ trust requirements below also apply to the dashboard.
 
 | Stack        | Service | Port   | URL                  | Notes                              |
 |--------------|---------|--------|----------------------|------------------------------------|
-| `dev`        | pgAdmin | `5050` | `pgadmin.localhost`  | Live instance runs on the Docker LXC; DB connection unverified |
-| `networking` | Caddy   | host   | —                    | Serves all `*.localhost` names below |
+| `dev`        | pgAdmin | `5050` | `docker.pgadmin`  | Live instance runs on the Docker LXC; DB connection unverified |
+| `networking` | Caddy   | host   | —                    | Serves the legacy `*.localhost` routes |
 
 ### `server/` — Docker LXC definitions
 
 | Stack        | Service     | Port(s)        | URL                   | Notes                          |
 |--------------|-------------|----------------|-----------------------|--------------------------------|
-| `ai`         | Open WebUI  | `3000`         | `ai.localhost`        | Configured inference endpoint needs verification |
+| `ai`         | Open WebUI  | `3000`         | `docker.ai`        | Configured inference endpoint needs verification |
 | `databases`  | Postgres    | `5432`         | —                     | LAN-exposed for pgAdmin        |
 | `databases`  | Redis       | `6379`         | —                     |                                |
-| `staging`    | FTP + nginx | `8090`, FTP    | `staging.localhost`   | Static staging host for the production site |
-| `home`       | Homebridge  | `8581`         | `homebridge.localhost`| Host networking (HomeKit mDNS) |
-| `media`      | Jellyfin    | `8096`         | `jellyfin.localhost`  | Migrated; read-only router media, background scan in progress |
-| `monitoring` | Grafana     | `3002`         | `grafana.localhost`   |                                |
-| `monitoring` | Portainer   | `9000`         | `portainer.localhost` |                                |
-| `monitoring` | Uptime Kuma | `3003`         | `uptime.localhost`    |                                |
+| `staging`    | FTP + nginx | `8090`, FTP    | `docker.staging`   | Static staging host for the production site |
+| `home`       | Homebridge  | `8581`         | `docker.homebridge`| Host networking (HomeKit mDNS) |
+| `media`      | Jellyfin    | `8096`         | `docker.jellyfin`  | Migrated; read-only router media, background scan in progress |
+| `monitoring` | Grafana     | `3002`         | `docker.grafana`   |                                |
+| `monitoring` | Portainer   | `9000`         | `docker.portainer` |                                |
+| `monitoring` | Uptime Kuma | `3003`         | `docker.uptime`    |                                |
 | `networking` | Caddy       | host           | —                     | Reverse proxy for this host    |
-| `services`   | Vaultwarden | `8080`         | `vault.localhost`     | Password manager               |
-| `services`   | Gitea       | `3001`, `2222` | `git.localhost`       | Git server (`2222` = SSH)      |
+| `services`   | Vaultwarden | `8080`         | `docker.vault`     | Password manager               |
+| `services`   | Gitea       | `3001`, `2222` | `docker.git`       | Git server (`2222` = SSH)      |
 
 ### Additional services verified on the Docker LXC
 
@@ -148,11 +149,20 @@ root if clients use both. Do not delete `caddy_data`, export CA private keys, or
 rely on clicking through browser certificate errors. See
 [Caddy's local HTTPS documentation](https://caddyserver.com/docs/automatic-https#local-https).
 
-`*.localhost` resolves to the client itself, so these names work on the Mac through
-its local proxy; they are not LAN DNS names for phones or other computers. For LAN
-clients, configure a real LAN DNS name (for example under `home.arpa`) pointing to
-the server proxy, then add that name to the matching Caddy site and trust its CA.
-See [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761).
+The homelab uses `https://docker.<service>` names through the server Caddy proxy.
+In Pi-hole Local DNS Records, point each of these names to `<docker-lxc-ip>`:
+`docker.homepage`, `docker.homebridge`, `docker.pihole`, `docker.ai`,
+`docker.portainer`, `docker.grafana`, `docker.uptime`, `docker.vault`, `docker.git`,
+`docker.bookstack`, `docker.pgadmin`, `docker.ollama`, and `docker.jellyfin`.
+`docker.staging` is reserved for the undeployed staging stack. Configure clients
+to use Pi-hole for DNS and trust the server Caddy CA. DNS records alone do not
+route ports; the matching Caddy aliases provide HTTPS without port numbers.
+Pi-hole records are managed in its live settings and are not imported by Compose.
+
+The legacy `*.localhost` routes remain available through the Mac proxy. These
+names resolve to the client itself, not the Docker host. The `docker.<service>`
+names are a private homelab convention, not public DNS. See
+[RFC 6761](https://www.rfc-editor.org/rfc/rfc6761) for `.localhost` behavior.
 
 Services with a configured public/base URL must use their HTTPS route (especially
 BookStack's `APP_URL`, Gitea's `ROOT_URL`, and Vaultwarden's `DOMAIN` if configured).

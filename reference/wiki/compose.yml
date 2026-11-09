@@ -20,7 +20,7 @@ services:
       PGID: 1000
       TZ: America/New_York
       APP_KEY: ${APP_KEY:?set APP_KEY in reference/wiki/.env}
-      APP_URL: https://bookstack.localhost
+      APP_URL: https://docker.bookstack
       DB_HOST: bookstack-db
       DB_PORT: 3306
       DB_USERNAME: bookstack

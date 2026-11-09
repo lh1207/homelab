@@ -5,74 +5,74 @@
 
 # ── AI ────────────────────────────────────────────────────────────────────────
 
-homepage.localhost {
+homepage.localhost, docker.homepage {
   reverse_proxy 127.0.0.1:3004
 }
 
-ai.localhost {
+ai.localhost, docker.ai {
   reverse_proxy localhost:3000
 }
 
 # ── Dev ───────────────────────────────────────────────────────────────────────
 
-pgadmin.localhost {
+pgadmin.localhost, docker.pgadmin {
   reverse_proxy {$PGADMIN_UPSTREAM}
 }
 
-ollama.localhost {
+ollama.localhost, docker.ollama {
   reverse_proxy {$OLLAMA_UPSTREAM}
 }
 
-staging.localhost {
+staging.localhost, docker.staging {
   reverse_proxy localhost:8090
 }
 
 # ── Services ──────────────────────────────────────────────────────────────────
 
-vault.localhost {
+vault.localhost, docker.vault {
   encode gzip
   reverse_proxy localhost:8080
 }
 
-git.localhost {
+git.localhost, docker.git {
   reverse_proxy localhost:3001
 }
 
 # BookStack may run on this host or a separate LXC; configure its actual web URL.
-bookstack.localhost {
+bookstack.localhost, docker.bookstack {
   reverse_proxy {$BOOKSTACK_UPSTREAM}
 }
 
 # ── Media ─────────────────────────────────────────────────────────────────────
 
-jellyfin.localhost {
+jellyfin.localhost, docker.jellyfin {
   reverse_proxy localhost:8096
 }
 
 # ── Home ──────────────────────────────────────────────────────────────────────
 
-homebridge.localhost {
+homebridge.localhost, docker.homebridge {
   reverse_proxy localhost:8581
 }
 
 # ── DNS ───────────────────────────────────────────────────────────────────────
 
 # Pi-hole may run on this host or a separate LXC; configure its actual web URL.
-pihole.localhost {
+pihole.localhost, docker.pihole {
   redir / /admin/ 308
   reverse_proxy {$PIHOLE_UPSTREAM}
 }
 
 # ── Monitoring ────────────────────────────────────────────────────────────────
 
-grafana.localhost {
+grafana.localhost, docker.grafana {
   reverse_proxy localhost:3002
 }
 
-portainer.localhost {
+portainer.localhost, docker.portainer {
   reverse_proxy localhost:9000
 }
 
-uptime.localhost {
+uptime.localhost, docker.uptime {
   reverse_proxy localhost:3003
 }

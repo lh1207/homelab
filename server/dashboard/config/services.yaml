@@ -1,22 +1,22 @@
 - Everyday:
     - Jellyfin:
         icon: jellyfin.png
-        href: https://jellyfin.localhost
+        href: https://docker.jellyfin
         description: Movies, shows, music, pictures, and books
         siteMonitor: http://host.docker.internal:8096/health
     - BookStack:
         icon: bookstack.png
-        href: https://bookstack.localhost
+        href: https://docker.bookstack
         description: Homelab knowledge and documentation
         siteMonitor: http://host.docker.internal:6875/login
     - Open WebUI:
         icon: open-webui.png
-        href: https://ai.localhost
+        href: https://docker.ai
         description: AI workspace · embedding model installed
         siteMonitor: http://host.docker.internal:3000/health
     - Vaultwarden:
         icon: vaultwarden.png
-        href: https://vault.localhost
+        href: https://docker.vault
         description: Password vault
         siteMonitor: http://host.docker.internal:8080/alive
 - Home & Network:
@@ -26,12 +26,12 @@
         description: Home automation · VM 101
     - Homebridge:
         icon: homebridge.png
-        href: https://homebridge.localhost
+        href: https://docker.homebridge
         description: HomeKit bridge · native mDNS discovery
         siteMonitor: http://host.docker.internal:8581
     - Pi-hole:
         icon: pi-hole.png
-        href: https://pihole.localhost/admin/
+        href: https://docker.pihole/admin/
         description: DNS filtering · TCP and UDP 53
         siteMonitor: http://host.docker.internal:8888/admin/
 - Operations:
@@ -41,50 +41,50 @@
         description: Gobbles · Docker LXC and Home Assistant VM
     - Portainer:
         icon: portainer.png
-        href: https://portainer.localhost
+        href: https://docker.portainer
         description: Containers, volumes, networks, and logs
         siteMonitor: http://host.docker.internal:9000/api/status
     - Uptime Kuma:
         icon: uptime-kuma.png
-        href: https://uptime.localhost
+        href: https://docker.uptime
         description: Saved monitors and availability history
         siteMonitor: http://host.docker.internal:3003
     - Grafana:
         icon: grafana.png
-        href: https://grafana.localhost
+        href: https://docker.grafana
         description: Metrics and dashboards
         siteMonitor: http://host.docker.internal:3002/api/health
 - Data & Infrastructure:
     - PostgreSQL:
         icon: postgres.png
-        href: https://pgadmin.localhost
+        href: https://docker.pgadmin
         description: TCP 5432 · manage through pgAdmin
     - Redis:
         icon: redis.png
-        href: https://portainer.localhost
+        href: https://docker.portainer
         description: TCP 6379 · console and logs through Portainer
     - MariaDB:
         icon: mariadb.png
-        href: https://portainer.localhost
+        href: https://docker.portainer
         description: Private BookStack database · bookstack-db
     - Caddy:
         icon: caddy.png
-        href: https://portainer.localhost
+        href: https://docker.portainer
         description: HTTPS proxies on Docker LXC and Mac · no admin UI
 - Development:
     - Gitea:
         icon: gitea.png
-        href: https://git.localhost
+        href: https://docker.git
         description: Git hosting · initial setup pending · SSH 2222
         siteMonitor: http://host.docker.internal:3001
     - pgAdmin:
         icon: pgadmin.png
-        href: https://pgadmin.localhost
+        href: https://docker.pgadmin
         description: PostgreSQL administration
         siteMonitor: http://host.docker.internal:5050/misc/ping
     - Ollama:
         icon: ollama.png
-        href: https://ollama.localhost
+        href: https://docker.ollama
         description: Model API · nomic-embed-text · TCP 11434
         siteMonitor: http://host.docker.internal:11434
     - Reddit KB:
@@ -93,5 +93,5 @@
         description: Local Mac knowledge base · Mac access only
     - Staging:
         icon: nginx.png
-        href: https://staging.localhost
+        href: https://docker.staging
         description: Not deployed · nginx and FTP definition only

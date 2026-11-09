@@ -22,7 +22,7 @@ services:
     environment:
       TZ: America/New_York
       LOG_TARGETS: stdout
-      HOMEPAGE_ALLOWED_HOSTS: homepage.localhost
+      HOMEPAGE_ALLOWED_HOSTS: homepage.localhost,docker.homepage
       HOMEPAGE_VAR_PROXMOX_URL: ${HOMEPAGE_VAR_PROXMOX_URL:?set the Proxmox URL}
       HOMEPAGE_VAR_HOMEASSISTANT_URL: ${HOMEPAGE_VAR_HOMEASSISTANT_URL:?set the Home Assistant URL}
     volumes:
