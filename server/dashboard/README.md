@@ -4,11 +4,11 @@ Homepage 2.6.0 is live on CT105 at `/root/services/optiplex/dashboard`. Its 20 c
 
 ## Access and configuration
 
-Open `https://homepage.localhost` from the Mac. Mac and server Caddy route the trusted HTTPS request to Homepage. `.localhost` resolves only on the client machine, so this is not a LAN or public hostname. Homepage allows the `homepage.localhost` Host header; requests made directly to the container IP are intentionally rejected and should go through the proxy.
+Open `https://docker.homepage` from a client using the homelab Pi-hole DNS server. Its local DNS record points to the Docker LXC, where Caddy proxies HTTPS to Homepage. Clients must trust the server Caddy CA. Homepage allows the `docker.homepage` and legacy `homepage.localhost` Host headers; requests made directly to the container IP are intentionally rejected and should go through the proxy. The Mac proxy continues to support `https://homepage.localhost`.
 
 The Compose stack listens on port `3004`, binding both `127.0.0.1` and `DASHBOARD_BIND_IP`. The tracked Compose file, `.env.example`, and YAML templates in `config/` are the configuration source. The private `.env` is kept only in the deployment directory at `/root/services/optiplex/dashboard`. It supplies `DASHBOARD_BIND_IP`, `HOMEPAGE_VAR_PROXMOX_URL`, and `HOMEPAGE_VAR_HOMEASSISTANT_URL`. The Compose file maps `host.docker.internal` to the host gateway; HTTP checks use that name to reach backend services.
 
-The Home Assistant card links to the user-supplied `homeassistant.local:8123` URL. That hostname is not resolvable from this server environment, so the card has no `siteMonitor` check. Staging is not deployed; its card is a placeholder.
+The Home Assistant card links to the user-supplied `homeassistant.local:8123` URL. That hostname is not resolvable from this server environment, so the card has no `siteMonitor` check. Staging is not deployed; its card is a placeholder. Docker service cards use `https://docker.<service>` names; internal `siteMonitor` endpoints continue to check backend services directly. See the root README for the Pi-hole records and proxy setup.
 
 ## Deploy and roll back
 
