@@ -170,6 +170,13 @@ Update those in their deployed application configuration; the external Compose
 sources are not synchronized by editing this checkout. Recreate Caddy after editing its config or `.env`
 with `docker compose up -d --force-recreate caddy` (`admin off` disables reloads).
 
+For the migrated BookStack library, changing `APP_URL` from
+`https://bookstack.localhost` to `https://docker.bookstack` also requires a
+one-time database URL migration. Follow the [backed-up URL cutover procedure](docs/runbooks/bookstack.md#change-the-base-url)
+before reopening access; changing the environment alone leaves existing absolute
+image URLs and content links on the old hostname. This migration is a deployment
+step and has not been verified live by the repository change.
+
 The Mac proxy is deployed from `workstation/networking` with the Compose project
 name `networking`, preserving its existing certificate volumes. Use
 `docker compose -p networking up -d --force-recreate caddy` from that folder.
