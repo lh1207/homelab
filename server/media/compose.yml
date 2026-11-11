@@ -14,7 +14,7 @@ volumes:
 
 services:
   jellyfin:
-    image: jellyfin/jellyfin:10.11.8@sha256:1694ff069f0c9dafb283c36765175606866769f5d72f2ed56b6a0f1be922fc37
+    image: jellyfin/jellyfin:12.4@sha256:fea863d0cd9ec445985d9c75fc6ed64e38a1d2766cf0c250a33d553f4fc1b771
     container_name: jellyfin
     restart: unless-stopped
     # Refuse to scan the underlying empty directory if the SMB mount is absent.

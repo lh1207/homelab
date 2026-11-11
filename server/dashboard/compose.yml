@@ -1,13 +1,13 @@
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:v2.6.0@sha256:3e38fe788223cb46a3ce1f046ef11667b40f7707fdca0dcbfa3f86c5c42bf1e8
+    image: ghcr.io/gethomepage/homepage:v2.7.0@sha256:19c5c09184458a41b7b5915e71463a39f36cd33540f41bdbed008791b8182d5f
     container_name: homepage
     restart: unless-stopped
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    # Match the v2.6.0 image check explicitly so Compose scanners can see it.
+    # Match the image check explicitly so Compose scanners can see it.
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider -Y off http://127.0.0.1:$$PORT/api/healthcheck || exit 1"]
       interval: 10s
