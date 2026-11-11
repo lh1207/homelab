@@ -328,8 +328,14 @@ See the [runbook index](docs/runbooks/README.md) for
 [Pi-hole](docs/runbooks/pihole.md), [Tailscale](docs/runbooks/tailscale.md),
 [BookStack](docs/runbooks/bookstack.md), and
 [Uptime Kuma](docs/runbooks/uptime-kuma.md). These separate dated migration
-evidence from proposed diagnosis and recovery procedures. Tailscale placement
-and deployment are not established by this repository.
+evidence from proposed diagnosis and recovery procedures. Tailscale 1.104.6 is
+installed directly in CT 105 with persistent TUN passthrough and an active systemd
+service. It is enrolled and online; iPhone access to Jellyfin over cellular was
+verified November 11, 2026, as recorded in its runbook. A single-host subnet route
+and Pi-hole tailnet DNS now preserve the existing
+`docker.<service>` names; the operator confirmed trusted Jellyfin and Homepage
+HTTPS over cellular after iPhone CA setup. See the runbook for scope, limitations,
+and rollback.
 
 ## Deploying a stack
 

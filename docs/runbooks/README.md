@@ -8,7 +8,7 @@ has passed.
 | Service | Runbook | Recorded placement |
 | --- | --- | --- |
 | Pi-hole | [DNS diagnosis and recovery](pihole.md) | Docker LXC CT 105, stack `dns` |
-| Tailscale | [Access diagnosis and recovery](tailscale.md) | Deployment not established by this repository |
+| Tailscale | [Deployment, access diagnosis and recovery](tailscale.md) | CT 105 single-host route and Pi-hole DNS; iPhone trusted Jellyfin/Homepage HTTPS confirmed November 11 |
 | BookStack | [Library diagnosis and recovery](bookstack.md) | CT 105, stack `wiki` |
 | Uptime Kuma | [Monitoring diagnosis and recovery](uptime-kuma.md) | CT 105, stack `monitoring` |
 
