@@ -8,7 +8,7 @@ volumes:
 
 services:
   postgres:
-    image: postgres:16@sha256:5db6dac2ef5dcff512f4f00a009c3c332b9f2f28f24277175bf3e4a3d02ef83a
+    image: postgres:16@sha256:f9a7b9ebf6f56201f949db745e47bc423c0f0f8294bafe991cc10bf74b029657
     container_name: postgres
     restart: unless-stopped
     ports:
@@ -23,7 +23,7 @@ services:
       - databases
 
   redis:
-    image: redis:7-alpine@sha256:8da19c7399dca900c6822a1cf30f9d2285585e2c4b457ff4095b0f4500054d3f
+    image: redis:7-alpine@sha256:7b1753b4c5ad8458906c272a8132b8c15f5557b000379eb115fb239706a384b7
     container_name: redis
     restart: unless-stopped
     ports:

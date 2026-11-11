@@ -10,7 +10,7 @@ volumes:
 
 services:
   bookstack:
-    image: lscr.io/linuxserver/bookstack:latest@sha256:da6324232770050b7d5f6222e8f4e223f1c688363b02ebb3c15a7546dd7133d5
+    image: lscr.io/linuxserver/bookstack:latest@sha256:2ece67eeffcc8601f2c3d44c77d787ce49b1e0becfcb2c4bd8ce9b69fa8393ed
     container_name: bookstack
     restart: unless-stopped
     ports:
@@ -34,7 +34,7 @@ services:
       - bookstack-db
 
   bookstack-db:
-    image: lscr.io/linuxserver/mariadb:latest@sha256:d0f9ffd4d00878b8892888e70cb8ea12f4d2dfa63ac940ceb9fd1b36a1b449e3
+    image: lscr.io/linuxserver/mariadb:latest@sha256:cc9c523dead7690487d5892419b5c513c78bf398fe03b115e43a652ab75a237c
     container_name: bookstack-db
     restart: unless-stopped
     environment:
