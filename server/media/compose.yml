@@ -49,6 +49,8 @@ services:
           create_host_path: false
     networks:
       - media
-    # --- Uncomment for Intel Quick Sync hardware transcoding ---
-    # devices:
-    #   - /dev/dri:/dev/dri
+    # CT 105 render device; keep the numeric group aligned with its ownership.
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    group_add:
+      - "992"
