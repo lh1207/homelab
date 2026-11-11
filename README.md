@@ -97,7 +97,7 @@ trust requirements below also apply to the dashboard.
 | `databases`  | Redis       | `6379`         | —                     |                                |
 | `staging`    | FTP + nginx | `8090`, FTP    | `docker.staging`   | Static staging host for the production site |
 | `home`       | Homebridge  | `8581`         | `docker.homebridge`| Host networking (HomeKit mDNS) |
-| `media`      | Jellyfin    | `8096`         | `docker.jellyfin`  | Quick Sync enabled; read-only router media; [validation](docs/validation/2026-11-10-cpu-qsv.md) |
+| `media`      | Jellyfin    | `8096`         | `docker.jellyfin`  | Quick Sync enabled; read-only router media; [CPU validation](docs/validation/2026-11-10-cpu-qsv.md); [update checks](docs/validation/2026-11-11-updates.md) |
 | `monitoring` | Grafana     | `3002`         | `docker.grafana`   |                                |
 | `monitoring` | Portainer   | `9000`         | `docker.portainer` |                                |
 | `monitoring` | Uptime Kuma | `3003`         | `docker.uptime`    |                                |
